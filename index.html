@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Human 3.0 · 人生规划测试</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2322d3ee' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm-1-11h2v5h-2V9Zm0 7h2v2h-2v-2Z'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg0:#0a0e15; --bg1:#0f1522; --bg2:#141c2c;
+  --card:#121a29; --card2:#0e1522; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --ink:#e8eef7; --mut:#93a4bc; --faint:#5f7089;
+  --mind:#22d3ee; --body:#34d399; --spirit:#a78bfa; --vocation:#fbbf24;
+  --white:#ffffff; --glass:rgba(18,26,41,.7);
+  --r:14px; --r-sm:10px;
+  --shadow:0 20px 60px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  background:var(--bg0); color:var(--ink);
+  font-family:"Noto Sans SC",-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+  line-height:1.7; letter-spacing:.01em;
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 500px at 12% -10%, rgba(34,211,238,.10), transparent 60%),
+    radial-gradient(800px 500px at 88% -6%, rgba(251,191,36,.08), transparent 55%),
+    radial-gradient(1000px 700px at 50% 120%, rgba(167,139,250,.08), transparent 60%);
+}
+.wrap{max-width:940px; margin:0 auto; padding:0 22px;}
+
+/* ===== 通用 ===== */
+.hidden{display:none !important;}
+.view{animation:fade .5s ease both;}
+@keyframes fade{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;}}
+button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:14px 30px; border-radius:999px;
+  font-size:15px; font-weight:600; letter-spacing:.02em;
+  background:linear-gradient(135deg, #22d3ee, #818cf8);
+  color:#051018; transition:.25s; box-shadow:0 10px 30px rgba(34,211,238,.25);
+}
+.btn:hover{transform:translateY(-2px); box-shadow:0 16px 40px rgba(34,211,238,.35);}
+.btn.ghost{background:transparent; color:var(--mut); border:1px solid var(--line2); box-shadow:none;}
+.btn.ghost:hover{color:var(--ink); border-color:rgba(255,255,255,.3);}
+.btn:disabled{opacity:.4; cursor:not-allowed; transform:none; box-shadow:none;}
+
+/* ===== 起始页 hero ===== */
+.hero{min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:70px 0 40px;}
+.hero-eyebrow{display:inline-flex; align-items:center; gap:10px; color:var(--mut); font-size:13px; letter-spacing:.28em; text-transform:uppercase; margin-bottom:22px;}
+.hero-eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--mind); box-shadow:0 0 12px var(--mind);}
+.hero h1{font-size:clamp(38px,7vw,64px); line-height:1.12; font-weight:800; letter-spacing:-.01em; margin-bottom:20px;}
+.hero h1 .thin{font-weight:300; color:var(--mut);}
+.hero .sub{font-size:clamp(15px,2.3vw,18px); color:var(--mut); max-width:620px; margin-bottom:40px;}
+.hero .cta-row{display:flex; gap:14px; flex-wrap:wrap; align-items:center;}
+.hero .meta{margin-top:26px; color:var(--faint); font-size:13px;}
+
+/* 四象限 mini 图（SVG 人类上升 + 四色轨） */
+.quad-map{position:relative; margin:38px 0 10px;}
+.quad-map svg{width:100%; height:auto; display:block;}
+.quad-legend{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px;}
+.ql{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--mut);}
+.ql i{width:10px;height:10px;border-radius:3px; flex:none;}
+@media(max-width:640px){.quad-legend{grid-template-columns:repeat(2,1fr);}}
+
+/* ===== 问答页 ===== */
+.quiz{padding:44px 0 60px; max-width:760px; margin:0 auto;}
+.q-top{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:8px; flex-wrap:wrap;}
+.q-count{color:var(--faint); font-size:13px; letter-spacing:.06em;}
+.q-chip{display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; padding:5px 12px; border-radius:999px; border:1px solid; letter-spacing:.05em;}
+.progress-track{height:5px; background:var(--card2); border-radius:999px; overflow:hidden; margin:16px 0 30px;}
+.progress-fill{height:100%; width:5%; border-radius:999px; background:linear-gradient(90deg,var(--mind),var(--spirit)); transition:width .5s cubic-bezier(.2,.8,.2,1);}
+.q-card{background:var(--glass); border:1px solid var(--line); border-radius:var(--r); padding:34px 30px; backdrop-filter:blur(8px); box-shadow:var(--shadow);}
+.q-tag{font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; opacity:.8; margin-bottom:14px;}
+.q-txt{font-size:clamp(20px,3.4vw,27px); font-weight:700; line-height:1.4; margin-bottom:6px;}
+.q-tip{color:var(--faint); font-size:13.5px; margin-bottom:26px;}
+.opt-list{display:flex; flex-direction:column; gap:12px;}
+.opt{
+  display:flex; align-items:flex-start; gap:14px; text-align:left;
+  padding:16px 18px; border:1px solid var(--line); border-radius:var(--r-sm);
+  background:var(--card2); transition:.18s; font-size:15px; color:var(--mut);
+}
+.opt .k{flex:none; width:26px; height:26px; border-radius:8px; border:1px solid var(--line2); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--faint); transition:.18s; margin-top:1px;}
+.opt:hover{border-color:var(--line2); background:#16213a; color:var(--ink);}
+.opt.sel{border-color:var(--qc); background:color-mix(in srgb, var(--qc) 12%, var(--card2)); color:var(--ink);}
+.opt.sel .k{background:var(--qc); border-color:var(--qc); color:#051018; font-weight:700;}
+.opt .t{flex:1;}
+.q-follow{margin-top:26px;}
+.q-follow label{font-size:13px; color:var(--faint); display:block; margin-bottom:8px;}
+.q-follow textarea{
+  width:100%; min-height:74px; resize:vertical; padding:12px 14px;
+  background:var(--card2); border:1px solid var(--line); border-radius:var(--r-sm);
+  color:var(--ink); font-family:inherit; font-size:14.5px; line-height:1.6; transition:.18s;
+}
+.q-follow textarea:focus{outline:none; border-color:var(--qc);}
+.q-nav{display:flex; justify-content:space-between; gap:14px; margin-top:30px; align-items:center;}
+.q-nav .btn{padding:12px 26px;}
+.q-stepdots{display:flex; gap:5px; flex-wrap:wrap; justify-content:center; margin-top:22px;}
+.sd{width:7px; height:7px; border-radius:50%; background:var(--card2);}
+.sd.done{background:var(--qc);}
+.sd.cur{background:var(--qc); box-shadow:0 0 0 4px color-mix(in srgb,var(--qc) 25%, transparent);}
+
+/* ===== 加载覆盖 ===== */
+#loading{position:fixed; inset:0; background:var(--bg0); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; z-index:50;}
+.spinner{width:54px;height:54px;border-radius:50%;border:3px solid var(--card2);border-top-color:var(--mind);border-right-color:var(--spirit);animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#loading p{color:var(--mut); font-size:14px; letter-spacing:.05em;}
+
+/* ===== 报告页 ===== */
+.report{padding:56px 0 80px;}
+.rep-head{text-align:center; margin-bottom:46px;}
+.rep-head .eyebrow{color:var(--faint); letter-spacing:.2em; font-size:12px; text-transform:uppercase;}
+.rep-head h2{font-size:clamp(30px,5vw,44px); font-weight:800; margin:10px 0 8px;}
+.rep-head p{color:var(--mut); max-width:640px; margin:0 auto;}
+.sec-title{display:flex; align-items:center; gap:12px; margin:54px 0 20px; font-size:22px; font-weight:700;}
+.sec-title .no{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#051018;flex:none;}
+.grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+@media(max-width:760px){.grid4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:420px){.grid4{grid-template-columns:1fr;}}
+.level-card{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:20px 18px; position:relative; overflow:hidden;}
+.level-card .band{position:absolute; top:0; left:0; right:0; height:4px;}
+.level-card .lc-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+.level-card .lc-name{font-weight:700; font-size:16px;}
+.level-card .lc-score{font-size:12px; color:var(--faint);}
+.lc-level{display:flex; align-items:baseline; gap:8px; margin-bottom:16px;}
+.lc-level .lv{font-size:34px; font-weight:800; line-height:1;}
+.lc-level .lv-name{font-size:13px; color:var(--mut);}
+.lv-desc{font-size:13.5px; color:var(--mut); line-height:1.6;}
+.lv-meter{display:flex; gap:6px; margin:16px 0 4px;}
+.lv-meter span{height:5px; flex:1; border-radius:99px; background:var(--card2);}
+.lv-meter span.on{background:var(--qc);}
+.lv-tag{font-size:11px; letter-spacing:.12em; color:var(--faint); margin-top:8px;}
+
+/* 雷达/仪表 SVG 容器 */
+.radar-wrap{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:22px; margin-top:14px; display:flex; flex-wrap:wrap; gap:24px; align-items:center; justify-content:center;}
+.radar-wrap svg{max-width:360px; width:100%;}
+.radar-side{flex:1; min-width:240px; max-width:380px;}
+.radar-side h3{font-size:18px; margin-bottom:6px;}
+.radar-side p{color:var(--mut); font-size:14px;}
+.core-total{font-size:44px; font-weight:800; line-height:1; margin:10px 0 4px;}
+
+/* 核心问题 / 杠杆点 */
+.spot{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:26px 26px;}
+.spot .st{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); margin-bottom:10px;}
+.spot h3{font-size:clamp(20px,3.4vw,26px); margin-bottom:12px; line-height:1.35;}
+.spot p{color:var(--mut); font-size:14.5px;}
+.spot .em{color:var(--ink); font-weight:600;}
+.pair{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px;}
+@media(max-width:640px){.pair{grid-template-columns:1fr;}}
+
+/* 矛盾点 */
+.contra{background:var(--card); border:1px solid rgba(251,191,36,.25); border-radius:var(--r); padding:24px; margin-top:14px;}
+.contra h3{display:flex; align-items:center; gap:10px; font-size:18px; margin-bottom:14px;}
+.contra ul{list-style:none; display:flex; flex-direction:column; gap:14px;}
+.contra li{display:flex; gap:12px; color:var(--mut); font-size:14.5px;}
+.contra li .cmark{flex:none; width:22px;height:22px;border-radius:50%;background:rgba(251,191,36,.15);color:var(--vocation);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px;}
+.contra li b{color:var(--ink); font-weight:600;}
+.no-contra{color:#34d399; font-size:14.5px;}
+
+/* 时间轴 90 天 */
+.timeline{margin-top:6px;}
+.tl-row{display:grid; grid-template-columns:88px 26px 1fr; gap:0; align-items:start;}
+.tl-time{font-weight:800; font-size:14px; padding-top:2px; letter-spacing:.02em;}
+.tl-axis{display:flex; flex-direction:column; align-items:center; justify-self:center; height:100%;}
+.tl-axis .dot{width:14px;height:14px;border-radius:50%;background:var(--qc); box-shadow:0 0 0 5px color-mix(in srgb,var(--qc) 20%, transparent); margin-top:4px; z-index:2;}
+.tl-axis .line{flex:1; width:2px; background:var(--line2); margin-top:-2px;}
+.tl-body{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:20px 22px; margin:0 0 18px 10px;}
+.tl-body h4{font-size:16px; margin-bottom:6px;}
+.tl-body .tl-why{color:var(--faint); font-size:12.5px; margin-bottom:12px;}
+.tl-body ul{list-style:none; display:flex; flex-direction:column; gap:8px;}
+.tl-body li{display:flex; gap:10px; color:var(--mut); font-size:14px; align-items:flex-start;}
+.tl-body li .b{flex:none; width:6px;height:6px;border-radius:50%;background:var(--qc); margin-top:8px;}
+.tl-body li b{color:var(--ink); font-weight:600;}
+@media(max-width:600px){.tl-row{grid-template-columns:64px 22px 1fr;}}
+
+/* 重新测试 */
+.re-cta{text-align:center; margin-top:56px; padding:36px; background:var(--card); border:1px solid var(--line); border-radius:var(--r);}
+.re-cta p{color:var(--mut); margin-bottom:20px; max-width:520px; margin-left:auto; margin-right:auto;}
+
+/* 提示 toast */
+#toast{position:fixed; left:50%; bottom:30px; transform:translateX(-50%) translateY(20px); background:#16213a; border:1px solid var(--line2); padding:12px 20px; border-radius:12px; font-size:14px; color:var(--ink); opacity:0; pointer-events:none; transition:.3s; z-index:60; box-shadow:var(--shadow);}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+@media(prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important;}}
+</style>
+</head>
+<body>
+
+<!-- ===== 起始页 ===== -->
+<section id="view-start" class="view">
+  <div class="wrap hero">
+    <div class="hero-eyebrow"><span class="dot"></span>HUMAN 3.0 · 四象限人生系统</div>
+    <h1>你不是在规划人生<br><span class="thin">你是在重写自己的</span>操作系统</h1>
+    <p class="sub">源自 Dan Koe 的 Human 3.0 模型——用 20 个直达要害的问题，扫描你在心智、身体、精神、事业四个象限的真实等级，找到被伪装成"生活"的逃避，并生成一份可执行的 90 天进化指南。</p>
+
+    <div class="quad-map" id="heroMap"></div>
+
+    <div class="cta-row">
+      <button class="btn" id="btnStart">开始 20 问诊断</button>
+      <button class="btn ghost" id="btnAbout">先看模型说明</button>
+    </div>
+    <div class="meta">约 5–8 分钟 · 开放式问答 · 完成后即刻生成详细报告 · 数据仅保存在本机</div>
+  </div>
+</section>
+
+<!-- ===== 问答页 ===== -->
+<section id="view-quiz" class="view hidden">
+  <div class="wrap quiz">
+    <div class="q-top">
+      <div class="q-count" id="qCount"></div>
+      <div class="q-chip" id="qChip">心智 · Mind</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="qFill"></div></div>
+    <div class="q-card" id="qCard"></div>
+  </div>
+</section>
+
+<!-- ===== 报告页 ===== -->
+<section id="view-report" class="view hidden">
+  <div class="wrap report">
+    <div class="rep-head">
+      <div class="eyebrow">HUMAN 3.0 · 诊断报告</div>
+      <h2>你的四象限画像</h2>
+      <p id="repSub"></p>
+    </div>
+
+    <div class="sec-title"><div class="no" style="background:var(--mind)">1</div>四象限等级</div>
+    <div class="grid4" id="levelGrid"></div>
+    <div class="radar-wrap" id="radarWrap"></div>
+
+    <div class="sec-title"><div class="no" style="background:var(--spirit)">2</div>核心问题</div>
+    <div class="spot" id="coreSpot"></div>
+
+    <div class="sec-title"><div class="no" style="background:var(--vocation)">3</div>最大杠杆点</div>
+    <div class="spot" id="leverageSpot"></div>
+
+    <div class="sec-title"><div class="no" style="background:var(--body)">4</div>自欺点与矛盾识别</div>
+    <div class="contra" id="contraBlock"></div>
+
+    <div class="sec-title"><div class="no" style="background:var(--mind)">5</div>90 天进化指南</div>
+    <div class="timeline" id="timeline"></div>
+
+    <div class="re-cta">
+      <p>这份报告是你的起点，不是终点。90 天后回来重测，看分数如何变化。</p>
+      <button class="btn" id="btnRestart">重新测试</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 加载 ===== -->
+<div id="loading" class="hidden">
+  <div class="spinner"></div>
+  <p id="loadingText">正在读取你的答案…</p>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ===== 常量 ===== */
+var QUADRANTS = {
+  mind:{name:"心智",en:"Mind",color:"#22d3ee",lname:"认知 · 情绪 · 思维 · 自我意识"},
+  body:{name:"身体",en:"Body",color:"#34d399",lname:"健康 · 睡眠 · 运动 · 精力"},
+  spirit:{name:"精神",en:"Spirit",color:"#a78bfa",lname:"价值观 · 意义 · 关系 · 方向"},
+  vocation:{name:"事业",en:"Vocation",color:"#fbbf24",lname:"工作 · 收入 · 技能 · 自由度"}
+};
+var LEVELS = {
+  1:{tag:"L1",name:"混沌 · 被惯性驱动",desc:"你被环境、情绪和他人的期待推着走。生活是应对，不是选择。多数时间在消耗与恢复之间循环，尚未建立自我系统。"},
+  2:{tag:"L2",name:"觉醒 · 与自我拉扯",desc:"你知道自己想要什么，但行为跟不上认知。间歇性努力，反复重启，被旧习惯和环境拖回原地。潜力存在，但缺少系统和结构。"},
+  3:{tag:"L3",name:"系统化 · 进入正循环",desc:"你建立了清晰的自我系统：目标、习惯、环境、输入输出彼此咬合。有失控的部分，但整体在向上复利。"}
+};
+
+/* ===== 问题数据（20 题）===== */
+var QUESTIONS = [
+  /* ---------- 心智 Mind ---------- */
+  {id:"M1",quadrant:"mind",q:"你上一次认真思考「我到底想成为什么样的人」是什么时候？",tip:"给一个诚实的回答，而不是你应该有的答案。",
+   ph:"例如：很久没想过 / 偶尔会想但没有答案 / 有清晰方向…",
+   options:[
+     {score:1,label:"几乎没想过，过一天算一天，被事情推着走"},
+     {score:2,label:"偶尔会想，但没有清晰答案，想多了还会焦虑就回避"},
+     {score:3,label:"有相对清晰的人生方向，并且会定期审视、迭代它"}
+   ]},
+  {id:"M2",quadrant:"mind",q:"面对一次失败或挫折，你的第一反应通常是？",tip:"注意是「第一反应」，不是事后的理性分析。",
+   options:[
+     {score:1,label:"先怪外部——运气、别人、环境，然后情绪陷进去很久"},
+     {score:2,label:"会自责内耗，但停在原地，要隔很久才愿意重新行动"},
+     {score:3,label:"先稳住情绪，拆原因，快速调整方案再试一次"}
+   ]},
+  {id:"M3",quadrant:"mind",q:"你掌控自己情绪的能力怎么样？",tip:"情绪是信号，不是真相。重点是你被它带走的频率。",
+   options:[
+     {score:1,label:"常被情绪带着走，一件小事能毁掉一整天"},
+     {score:2,label:"能意识到情绪来了，但很难快速从中恢复"},
+     {score:3,label:"能觉察、命名情绪，并有办法有效疏导它"}
+   ]},
+  {id:"M4",quadrant:"mind",q:"你每周花多少时间学习真正有用的新东西（不是娱乐消遣）？",tip:"学习 = 主动、系统、能用于实践。刷短视频不算。",
+   ph:"例如：几乎为零 / 偶尔碎片化刷到 / 固定时间系统输入…",
+   options:[
+     {score:1,label:"几乎没有，输入全靠刷手机和被动接收"},
+     {score:2,label:"偶尔看一点，但碎片化、不系统、记不住也用不上"},
+     {score:3,label:"有固定时间系统学习，且会把学到的东西用于实践"}
+   ]},
+  {id:"M5",quadrant:"mind",q:"面对一个反复出现的问题，你能把原因想到第几层？",tip:"例如「工作不顺利」——是怪领导，还是能想到自己的能力、选择、环境结构。",
+   options:[
+     {score:1,label:"停在表面，只判断谁对谁错、谁该负责"},
+     {score:2,label:"能想一层原因，但容易停在「我没时间/他不行/环境差」"},
+     {score:3,label:"能推到系统性、结构性原因，并设计针对性的对策"}
+   ]},
+
+  /* ---------- 身体 Body ---------- */
+  {id:"B1",quadrant:"body",q:"你的睡眠质量和时长怎么样？",tip:"身体是执行系统，睡眠是它的地基。",
+   ph:"例如：经常熬夜到几点 / 睡够几小时 / 醒来状态…",
+   options:[
+     {score:1,label:"经常熬夜，睡眠不足或质量差，靠硬撑"},
+     {score:2,label:"时长够但规律性差，时好时坏"},
+     {score:3,label:"规律、充足，醒来有精神"}
+   ]},
+  {id:"B2",quadrant:"body",q:"你每周运动的频率和强度？",
+   options:[
+     {score:1,label:"基本不动，长期久坐，能坐着不站着"},
+     {score:2,label:"偶尔动一下，但没有形成习惯，随时放弃"},
+     {score:3,label:"固定每周数次，已成习惯，且会关注强度"}
+   ]},
+  {id:"B3",quadrant:"body",q:"你一天里的精力状态是？",tip:"注意你最近一个月真实的体感，而不是偶尔一天。",
+   ph:"例如：长期疲惫 / 靠咖啡撑 / 下午崩溃 / 状态稳定…",
+   options:[
+     {score:1,label:"长期疲惫、困倦，靠咖啡、饮料或硬撑"},
+     {score:2,label:"时好时坏，明显受作息、情绪、饮食波动"},
+     {score:3,label:"整体稳定旺盛，能按优先级合理分配"}
+   ]},
+  {id:"B4",quadrant:"body",q:"你对饮食和身体健康实际重视到什么程度？",tip:"把「身体是第一优先级」当成一条真话来回答。",
+   options:[
+     {score:1,label:"随意，外卖、重口味、不规律，身体靠边站"},
+     {score:2,label:"知道应该重视，但执行很随意，常找借口"},
+     {score:3,label:"有意识地选择饮食，把身体当作第一优先级对待"}
+   ]},
+  {id:"B5",quadrant:"body",q:"你有没有「熬夜游戏、刷手机、躺平」这类拖延式消耗？",tip:"这是伪装成休息的逃避。诚实点。",
+   ph:"例如：每晚刷到几点 / 明知该睡却停不下来 / 次数频率…",
+   options:[
+     {score:1,label:"高频，明知不好却停不下来，消耗大量时间"},
+     {score:2,label:"偶尔放纵，事后有愧疚，但能自控"},
+     {score:3,label:"很少，消耗类活动有明确边界"}
+   ]},
+
+  /* ---------- 精神 Spirit ---------- */
+  {id:"S1",quadrant:"spirit",q:"抛开「应该」，你人生里最想实现的一件事或一种状态是什么？",tip:"这是方向题。允许模糊，但请别给一个敷衍的答案。",
+   ph:"例如：自由职业 / 有一技之长 / 被认可 / 财务自由 / 某种生活状态…",
+   options:[
+     {score:1,label:"说不清，或只是随大流：别人要什么我也要什么"},
+     {score:2,label:"有模糊的方向，但没有勇气、也没有清晰的路径"},
+     {score:3,label:"清晰，并且我正在进行与之匹配的行动"}
+   ]},
+  {id:"S2",quadrant:"spirit",q:"你觉得现在的生活有意义吗？",tip:"「意义」不是宏大叙事，是你每天醒来的驱动力。",
+   options:[
+     {score:1,label:"空虚、麻木，更多是「活着」，靠惯性撑"},
+     {score:2,label:"偶尔有片刻意义感，但常被无聊、焦虑、刷手机打断"},
+     {score:3,label:"强烈感到自己在做值得的事，有内驱动力"}
+   ]},
+  {id:"S3",quadrant:"spirit",q:"你身边重要关系的质量怎么样？",tip:"关系是精神的土壤。滋养 vs 消耗，要分清。",
+   options:[
+     {score:1,label:"以消耗型为主，或长期孤独、无人可说真话"},
+     {score:2,label:"一般般，不深也不坏，多数停留在表面"},
+     {score:3,label:"有滋养性的核心支持圈，能互相成长、说真话"}
+   ]},
+  {id:"S4",quadrant:"spirit",q:"你的核心价值判断来自哪里？",tip:"你决定「什么值得做、什么不能做」的依据是什么。",
+   options:[
+     {score:1,label:"随环境、随他人，没有自己的标准"},
+     {score:2,label:"有几条原则，但常被利益、情绪、别人眼光动摇"},
+     {score:3,label:"有清晰的自我原则，并据此做关键选择"}
+   ]},
+  {id:"S5",quadrant:"spirit",q:"你身处的环境（人、信息、空间）整体是滋养你还是消耗你？",tip:"环境会持续地喂养或掏空你的精神能量。",
+   options:[
+     {score:1,label:"长期消耗我——负能量的人、低质信息、混乱空间"},
+     {score:2,label:"中性，没增益也没明显消耗，一成不变"},
+     {score:3,label:"我主动构建的、滋养我的环境"}
+   ]},
+
+  /* ---------- 事业 Vocation ---------- */
+  {id:"V1",quadrant:"vocation",q:"你现在的工作 / 主业状态是？",
+   options:[
+     {score:1,label:"被动应付，没有成长也没有热情，靠到点下班"},
+     {score:2,label:"稳定但停滞，靠惯性和责任维持，找不到意义"},
+     {score:3,label:"有成长、有掌控感，且与我的方向一致"}
+   ]},
+  {id:"V2",quadrant:"vocation",q:"你的收入来源和结构？",tip:"收入结构 = 抗风险能力，也是自由度的量化。",
+   options:[
+     {score:1,label:"只有单一固定收入，抗风险能力很弱"},
+     {score:2,label:"以单一收入为主，有模糊的副业想法但没做"},
+     {score:3,label:"已有主动拓展的多元收入 / 副业在跑"}
+   ]},
+  {id:"V3",quadrant:"vocation",q:"你有多少可迁移、可商业化的技能？",tip:"指别人愿意为它付费的技能，不是「会打字」这种。",
+   ph:"例如：写作 / 剪辑 / 设计 / 某种手艺 / 运营 / 销售…",
+   options:[
+     {score:1,label:"几乎没有拿得出手、能变现的技能"},
+     {score:2,label:"有一些，但不足以变现，缺作品、缺自信"},
+     {score:3,label:"有可市场化的技能或作品，且持续在打磨"}
+   ]},
+  {id:"V4",quadrant:"vocation",q:"你是否在主动打造自己的事业 / 作品 / 品牌？",tip:"「主动」= 有输出、有作品、在迭代，而不是只有想法。",
+   options:[
+     {score:1,label:"没有，在等机会、等别人安排"},
+     {score:2,label:"想，但一直拖延，没真正启动"},
+     {score:3,label:"正在执行：有输出、有作品、在迭代"}
+   ]},
+  {id:"V5",quadrant:"vocation",q:"你的时间与财务自由度怎么样？",tip:"自由度 = 你能不能把时间花在最该花的地方。",
+   options:[
+     {score:1,label:"被锁死，没有余裕，连想都要挤时间"},
+     {score:2,label:"有一点自由，但被琐事和惯性填满"},
+     {score:3,label:"有选择权，能按自己的优先级支配时间"}
+   ]}
+];
+
+/* ===== 状态 ===== */
+var answers = {};   // id -> {score, label, text}
+var cur = 0;
+var $ = function(id){return document.getElementById(id);};
+
+/* ===== 象限 / 等级通用 ===== */
+function qColor(q){return QUADRANTS[q].color;}
+function scoreToLevel(s){ if(s<=8) return 1; if(s<=12) return 2; return 3; }
+
+/* ===== 渲染起始页 hero 四象限 SVG ===== */
+function buildHeroMap(){
+  var w=760,h=320,cx=w/2,cy=h/2;
+  var colors=[QUADRANTS.mind.color,QUADRANTS.body.color,QUADRANTS.spirit.color,QUADRANTS.vocation.color];
+  var svg='<svg viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg">';
+  // 轨道
+  for(var i=0;i<4;i++){
+    var a0=i*90-90, a1=a0+78;
+    var big='M '+centerArc(cx,cy,120,a0).x+' '+centerArc(cx,cy,120,a0).y+
+      ' A 120 120 0 0 1 '+centerArc(cx,cy,120,a1).x+' '+centerArc(cx,cy,120,a1).y;
+    svg+='<path d="'+big+'" stroke="'+colors[i]+'" stroke-width="2" fill="none" opacity="0.9" stroke-linecap="round"/>';
+    var mid=centerArc(cx,cy,120,(a0+a1)/2);
+    svg+='<circle cx="'+mid.x+'" cy="'+mid.y+'" r="4" fill="'+colors[i]+'"/>';
+    var tx=centerArc(cx,cy,152,(a0+a1)/2);
+    svg+='<text x="'+tx.x+'" y="'+tx.y+'" fill="'+colors[i]+'" font-size="15" font-weight="700" text-anchor="middle" dominant-baseline="middle">'+QUADRANTS[['mind','body','spirit','vocation'][i]].name+'</text>';
+  }
+  // 中央人类剪影（上升）
+  svg+='<circle cx="'+cx+'" cy="'+cy+'" r="46" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.12)"/>';
+  svg+='<path d="M'+(cx-10)+' '+(cy-8)+' h20 l-3 30 h-14 z" fill="none"/>';
+  svg+='<circle cx="'+cx+'" cy="'+(cy-22)+'" r="9" fill="#e8eef7"/>';
+  svg+='<path d="M'+cx+' '+cy+' L'+cx+' '+(cy-30)+'" stroke="#e8eef7" stroke-width="3" stroke-linecap="round"/>';
+  svg+='<path d="M'+(cx-10)+' '+cy+' h20" stroke="#e8eef7" stroke-width="3" stroke-linecap="round"/>';
+  svg+='</svg>';
+  $('heroMap').innerHTML=svg+'<div class="quad-legend">'+
+    ['mind','body','spirit','vocation'].map(function(q){
+      return '<div class="ql"><i style="background:'+QUADRANTS[q].color+'"></i>'+QUADRANTS[q].name+' · '+QUADRANTS[q].en+'</div>';
+    }).join('')+'</div>';
+}
+function centerArc(cx,cy,r,deg){var rad=deg*Math.PI/180;return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};}
+
+/* ===== 视图切换 ===== */
+function showView(id){
+  ['view-start','view-quiz','view-report'].forEach(function(v){ $(v).classList.add('hidden'); });
+  $(id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+/* ===== 渲染问题 ===== */
+function renderQuestion(){
+  var q=QUESTIONS[cur];
+  var col=qColor(q.quadrant);
+  $('qCount').textContent='问题 '+(cur+1)+' / '+QUESTIONS.length+' · '+QUADRANTS[q.quadrant].name+'象限';
+  $('qChip').textContent=QUADRANTS[q.quadrant].name+' · '+QUADRANTS[q.quadrant].en;
+  $('qChip').style.color=col; $('qChip').style.borderColor=col;
+  $('qFill').style.width=(((cur+1)/QUESTIONS.length)*100)+'%';
+  var has=answers[q.id];
+  var opts=q.options.map(function(o,i){
+    var sel=has && has.score===o.score;
+    return '<button class="opt'+(sel?' sel':'')+'" data-i="'+i+'" style="--qc:'+col+'">'+
+      '<span class="k">'+String.fromCharCode(65+i)+'</span>'+
+      '<span class="t">'+o.label+'</span></button>';
+  }).join('');
+  $('qCard').innerHTML=
+    '<div class="q-tag" style="color:'+col+'">'+QUADRANTS[q.quadrant].name+' · '+QUADRANTS[q.quadrant].en+'</div>'+
+    '<div class="q-txt">'+q.q+'</div>'+
+    (q.tip?'<div class="q-tip">'+q.tip+'</div>':'')+
+    '<div class="opt-list">'+opts+'</div>'+
+    '<div class="q-follow"><label>补充说明（可选，越具体越好）：</label>'+
+    '<textarea id="qFollow" placeholder="'+(q.ph||'例如：你的真实状态、你的纠结、你想改变的那件事…')+'">'+
+    (has&&has.text||'')+'</textarea></div>'+
+    '<div class="q-nav"><button class="btn ghost" id="qBack">上一步</button>'+
+    '<button class="btn" id="qNext">'+(cur===QUESTIONS.length-1?'完成诊断':'下一题')+'</button></div>';
+  bindOptions(col);
+  $('qBack').onclick=function(){ if(cur>0){cur--; renderQuestion();} };
+  $('qNext').onclick=function(){ saveAnswer(col); if(cur<QUESTIONS.length-1){cur++; renderQuestion();} else {finishQuiz();} };
+}
+function bindOptions(col){
+  var opts=$('qCard').querySelectorAll('.opt');
+  opts.forEach(function(b){
+    b.onclick=function(){
+      opts.forEach(function(x){x.classList.remove('sel');});
+      b.classList.add('sel');
+      answers[currentId()]=answers[currentId()]||{};
+      answers[currentId()].score=QUESTIONS[cur].options[+b.getAttribute('data-i')].score;
+    };
+  });
+}
+function currentId(){return QUESTIONS[cur].id;}
+function saveAnswer(col){
+  var id=currentId();
+  if(!answers[id]) answers[id]={};
+  var sel=$('qCard').querySelector('.opt.sel');
+  if(sel){ answers[id].score=QUESTIONS[cur].options[+sel.getAttribute('data-i')].score; }
+  var t=$('qFollow').value.trim();
+  if(t) answers[id].text=t;
+}
+
+/* ===== 完成诊断 ===== */
+function finishQuiz(){
+  showLoading();
+  setTimeout(function(){
+    var rep=generateReport();
+    renderReport(rep);
+    hideLoading();
+    showView('view-report');
+  }, 1300);
+}
+function showLoading(){ $('loading').classList.remove('hidden'); var l=0; var w=setInterval(function(){ l=Math.min(l+8,96); $('loadingText').textContent='正在分析你的四象限 '+(l)+'%…'; if(l>=96) clearInterval(w); },110); }
+function hideLoading(){ $('loading').classList.add('hidden'); }
+
+/* ===== 报告生成 ===== */
+function quadScore(qid){
+  var qs=QUESTIONS.filter(function(x){return x.quadrant===qid;});
+  var sum=0, answered=0;
+  qs.forEach(function(x){ var a=answers[x.id]; if(a&&typeof a.score==='number'){sum+=a.score;answered++;} });
+  // 未答按中性 L2(2) 计
+  sum += (qs.length-answered)*2;
+  return {score:sum, answered:answered};
+}
+function fullText(){ var parts=[]; for(var k in answers){ if(answers[k].text) parts.push(answers[k].text); } return parts.join(' '); }
+
+function generateReport(){
+  var levels={}, total=0;
+  Object.keys(QUADRANTS).forEach(function(q){
+    var r=quadScore(q); levels[q]={score:r.score, level:scoreToLevel(r.score), answered:r.answered}; total+=r.score;
+  });
+  var order=['mind','body','spirit','vocation'];
+  var weak=order.slice().sort(function(a,b){return levels[a].score-levels[b].score;})[0];
+  var strong=order.slice().sort(function(a,b){return levels[b].score-levels[a].score;})[0];
+  var ft=fullText();
+
+  // ---- 矛盾识别 ----
+  var contra=[];
+  function ans(id){var a=answers[id];return a&&typeof a.score==='number'?a.score:2;}
+  var hasGoal = ans('S1')>=3 || ans('M1')>=3;
+  var execLow = ans('V4')<=1 || ans('V2')<=1;
+  if(hasGoal && execLow){
+    contra.push({a:"你说自己「有方向 / 想搞副业 / 想要自由」", b:"但事业象限只有 "+levels.vocation.score+" 分，属于「想」而不「做」。你用想象代替了行动，方向就只是一句口号。"});
+  }
+  var inputLow = ans('M4')<=1, outputWant = ans('V4')>=2;
+  if(inputLow && outputWant){
+    contra.push({a:"你想打造事业 / 做输出", b:"但心智象限的学习题只得 "+levels.mind.score+" 分——几乎没有系统输入。没有输入的输出，是在流沙上盖楼。"});
+  }
+  var consumeHigh = ans('B5')===1, freedomHigh = ans('V5')>=3;
+  if(consumeHigh && freedomHigh){
+    contra.push({a:"你抱怨没时间、没自由", b:"却在身体象限承认自己高频熬夜 / 刷手机 / 躺平。你不是没时间，是把时间花在了逃避上。"});
+  }
+  if(/(熬夜|游戏|刷手机|躺平|拖延|停不下来|追剧)/.test(ft)){
+    contra.push({a:"你的补充里出现了消耗性行为（"+ft.match(/(熬夜|游戏|刷手机|躺平|拖延|停不下来|追剧)/g).slice(0,2).join("、")+"）", b:"这类「伪休息」正在偷走你最宝贵的精力和时间——它们是最隐蔽的自欺点。"});
+  }
+  if(/(没时间|太忙|等以后|再说|改天|先这样)/.test(ft)){
+    contra.push({a:"你的补充里反复出现「没时间 / 太忙 / 等以后」这类话", b:"「没有时间」通常不是事实，而是优先级回避的漂亮说法。分清「没时间」和「这不是我的优先级」。"});
+  }
+  if(levels[strong].score-levels[weak].score>=5){
+    contra.push({a:"你的 "+QUADRANTS[strong].name+" 象限（"+levels[strong].score+" 分）明显强于 "+QUADRANTS[weak].name+"（"+levels[weak].score+" 分）", b:"最强的部分在替最弱的部分兜底。你的优势掩盖了失衡，而失衡恰恰是下一步该补的地方。"});
+  }
+  if(contra.length===0){
+    contra.push({a:"本 90 天未检测到明显的跨题矛盾", b:"但你仍要警惕「测出等级就满足」的陷阱——报告不是终点，行动才是。诚实是唯一可持续的燃料。"});
+  }
+
+  // ---- 核心问题 ----
+  var coreMap={
+    mind:{t:"你的操作系统还是被动的", d:"你用情绪代替判断、用刷手机代替思考，认知没有系统，就永远在低水平重复。这个象限不升级，其他一切都会被「想不清楚」拖住。"},
+    body:{t:"你的身体是超载的执行器", d:"精力被耗干，你却在从它身上榨时间。没有体力作为地基，再好的规划都是空谈——你连想都嫌累。"},
+    spirit:{t:"你的方向是模糊的", d:"你被外部期待推着走，却没有自己的主线。方向不清，努力就散成一地碎片，每件事都做一点、每件事都没结果。"},
+    vocation:{t:"你的生存层还没有建起来", d:"没有可变现的技能，也没有主动输出的作品。事业不动，其他象限的觉醒就永远落不了地、变不成自由。"}
+  };
+
+  // ---- 最大杠杆点 ----
+  var levMap={
+    mind:{t:"先补心智：让「思考」成为你的第一生产力", d:"你现在最该撬动的不是更多努力，而是思考系统。每天 30 分钟结构化输入 + 输出，90 天后你的认知层会第一次出现复利。"},
+    body:{t:"先补身体：体力是其他三个象限的燃料", d:"睡眠、运动、饮食是性价比最高的杠杆——它同时托起你的情绪、精力、行动力。90 天把身体从负数拉回正数，其他象限会跟着松动。"},
+    spirit:{t:"先补方向：用一个清晰的主线收拢所有碎片", d:"你不用先搞清楚一切。只要选定一条主线，把它变成每天的行动，其他杂念会自动让位。方向定，则努力集中。"},
+    vocation:{t:"先补事业：用一个可变现技能撬动自由度", d:"这是把觉醒变现的象限。挑一个技能每天投入 90 分钟，90 天做出第一个作品并发布，自由度会第一次以具体形态出现。"}
+  };
+
+  // ---- 90 天计划 ----
+  var plan = planFor(weak, strong);
+
+  return {
+    levels:levels, total:total, weak:weak, strong:strong,
+    core:{t:coreMap[weak].t, d:coreMap[weak].d, q:weak},
+    leverage:{t:levMap[weak].t, d:levMap[weak].d, q:weak},
+    contra:contra, plan:plan
+  };
+}
+
+function planFor(weak, strong){
+  var P={
+    mind:[
+      {t:"每天早上一页「晨间三件事」", d:"写今天唯一最重要的 3 件事，其余全部划掉。让每一天有明确的靶心。"},
+      {t:"信息断食 7 天", d:"关掉短视频与信息流推送，把刷手机时间换成 30 分钟专注阅读。给大脑清空缓存。"},
+      {t:"挫折当日归因", d:"任何一次受挫，当天写 5 行：客观原因 / 我的可控项 / 下一步一个动作。练「第三层思考」。"}
+    ],
+    body:[
+      {t:"固定睡眠，23:30 前上床", d:"连续 30 天记录醒来状态，把「规律」练成不可谈判的事。"},
+      {t:"每天 20 分钟轻运动", d:"先养成「动」的习惯，不求强度。走路、拉伸、俯卧撑都算。"},
+      {t:"睡前 1 小时禁用手机", d:"把消耗型刷手机移出卧室，让「休息」真的成为休息。"}
+    ],
+    spirit:[
+      {t:"写一页「我到底要什么」", d:"不受任何人影响，列出 3 个候选方向，写下直觉。"},
+      {t:"环境断舍离", d:"取关或远离 3 个消耗你的人或信息源，把能量从被掏空的地方收回来。"},
+      {t:"每天 10 分钟独处", d:"不刷手机，只是和自己待着。让被外部噪音淹没的内心声音浮出来。"}
+    ],
+    vocation:[
+      {t:"选定一个主攻技能", d:"盘点现有技能，选 1 个最可能变现的，作为 90 天唯一主攻。"},
+      {t:"每天 90 分钟保护时间", d:"雷打不动只做这个技能的精进。这是你把自己「产品化」的地基。"},
+      {t:"拆解 3 个你想成为的人", d:"研究他们的路径，找出你能复制的第一步，而不是仰望。"}
+    ]
+  };
+  var P2={
+    mind:[
+      {t:"建立每周复盘", d:"每周日 30 分钟：回看哪些在消耗你、哪些在复利。让时间有去向。"},
+      {t:"三层归因成为习惯", d:"每天给一个困扰写三层原因，练成肌肉记忆，告别表面归因。"},
+      {t:"学一门真课并输出", d:"学一门对你有用的课，做笔记并公开/发给一个人。只输入不输出等于没学。"}
+    ],
+    body:[
+      {t:"每周 3 次 30 分钟以上运动", d:"在习惯基础上加一点强度，让身体开始真正变强。"},
+      {t:"只改两个饮食项", d:"减掉含糖饮料 / 规律三餐，只改两个，可坚持才算有效。"},
+      {t:"精力日历", d:"记录一天的高峰低谷，把最难的事排到精力高峰做。"}
+    ],
+    spirit:[
+      {t:"从 3 个方向里选 1 个", d:"写下为什么选它、你怕的是什么。让模糊变成可决策。"},
+      {t:"经营一段真话关系", d:"每周和一个人深度聊一次真话。高质量关系是精神的燃料。"},
+      {t:"重建一件热爱的小事", d:"给生活加一件「无意义但热爱」的事，找回内驱的感觉。"}
+    ],
+    vocation:[
+      {t:"做出第一个可展示作品", d:"哪怕粗糙，先完成再完美。作品是进入市场的最小门票。"},
+      {t:"发布到至少 1 个平台", d:"收集真实反馈，而不是自己脑内完美。"},
+      {t:"量化投入产出", d:"记录时间与技能成长曲线，让努力看得见。"}
+    ]
+  };
+  var P3={
+    mind:[
+      {t:"公开输出 3 次", d:"把你的思考写成文章 / 笔记 / 发给一个人。输出是认知的系统化。"},
+      {t:"写一页「我的自我系统」", d:"目标—习惯—环境—输入输出，浓缩成一页纸，作为你的操作系统 v1.0。"},
+      {t:"诚实复盘逃避", d:"这个 90 天你逃避了什么，写下来，不评判。看见即开始。"}
+    ],
+    body:[
+      {t:"让运动不可谈判", d:"像开会一样固定。身体进入正循环后，其他象限才有燃料。"},
+      {t:"戒掉一个明确的消耗习惯", d:"用一个有产出的事替换它。别贪多，一个就够。"},
+      {t:"评估身体复利", d:"回看精力是否开始支撑其他象限。这就是你 90 天的身体回报。"}
+    ],
+    spirit:[
+      {t:"把方向拆成可验证里程碑", d:"选定主线拆成 90 天后能验证的小目标，让方向落地。"},
+      {t:"用输出定义意义", d:"把你的价值观写成一篇文章或一段话，意义感会变得具体。"},
+      {t:"找到 1-2 个同行者", d:"主动构建能说真话的支持圈。独行快，众行远。"}
+    ],
+    vocation:[
+      {t:"完成 3 次公开输出", d:"建立最小个人作品集，让别人知道你做了什么。"},
+      {t:"尝试第一次小规模变现", d:"接单 / 咨询 / 卖一份东西。第一次是信心的分水岭。"},
+      {t:"评估主业与副业关系", d:"决定下一步：加速扩张，还是转型。让 90 天有结论。"}
+    ]
+  };
+  var stageWhy={
+    0:{title:"阶段一 · 建立地基（Day 1-30）",why:"前 30 天不做加法，只做减法：固定一个非谈判的习惯，砍掉一个消耗源。目标不是变强，是先让系统跑起来。"},
+    1:{title:"阶段二 · 形成系统（Day 31-60）",why:"地基稳固后，把单个动作升级为系统：复盘、频率、强度、输出。让努力开始累积。"},
+    2:{title:"阶段三 · 对外验证（Day 61-90）",why:"最后 30 天把积累推出去：公开、发布、变现、找同行。让 90 天有一个可看见的结果，而不只是感觉。"}
+  };
+  return [
+    {title:stageWhy[0].title, why:stageWhy[0].why, q:weak, items:P[weak]},
+    {title:stageWhy[1].title, why:stageWhy[1].why, q:weak, items:P2[weak]},
+    {title:stageWhy[2].title, why:stageWhy[2].why, q:weak, items:P3[weak]}
+  ];
+}
+
+/* ===== 渲染报告 ===== */
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function renderReport(rep){
+  var order=['mind','body','spirit','vocation'];
+  var repTexts={
+    mind:"认知 · 情绪 · 思维模式 · 自我意识",
+    body:"健康 · 睡眠 · 运动 · 精力",
+    spirit:"价值观 · 意义感 · 人际关系 · 人生方向",
+    vocation:"工作 · 收入 · 技能 · 商业能力 · 自由度"
+  };
+  $('repSub').textContent='你的四象限总分 '+rep.total+' 分（满分 60）。当前驱动你生活的是「'+QUADRANTS[rep.strong].name+'」象限，最薄弱、最该优先补的是「'+QUADRANTS[rep.weak].name+'」象限。';
+
+  // 等级卡
+  $('levelGrid').innerHTML=order.map(function(q){
+    var L=rep.levels[q]; var lv=LEVELS[L.level];
+    return '<div class="level-card" style="--qc:'+QUADRANTS[q].color+'">'+
+      '<div class="band" style="background:'+QUADRANTS[q].color+'"></div>'+
+      '<div class="lc-head"><span class="lc-name">'+QUADRANTS[q].name+'</span><span class="lc-score">'+L.score+' / 15 · '+repTexts[q]+'</span></div>'+
+      '<div class="lc-level"><span class="lv" style="color:'+QUADRANTS[q].color+'">'+lv.tag+'</span><span class="lv-name">'+lv.name+'</span></div>'+
+      '<div class="lv-meter"><span class="'+(L.level>=1?'on':'')+'"></span><span class="'+(L.level>=2?'on':'')+'"></span><span class="'+(L.level>=3?'on':'')+'"></span></div>'+
+      '<div class="lv-tag">'+('L'+(L.level===1?'1 · 混沌':L.level===2?'2 · 觉醒':'3 · 系统化'))+'</div>'+
+      '<div class="lv-desc">'+lv.desc+'</div>'+
+      (L.answered<5?'<div style="margin-top:10px;color:var(--vocation);font-size:12px">⚠ 有 '+(5-L.answered)+' 题未明确选择，按中性计</div>':'')+
+      '</div>';
+  }).join('');
+
+  // 雷达图 + 概览
+  $('radarWrap').innerHTML=radarSVG(rep)+
+    '<div class="radar-side"><h3>你的能量分布</h3>'+
+    '<div class="core-total">'+rep.total+' <span style="font-size:16px;color:var(--mut)">/ 60</span></div>'+
+    '<p>最强：<b style="color:'+QUADRANTS[rep.strong].color+'">'+QUADRANTS[rep.strong].name+'</b>（'+rep.levels[rep.strong].score+' 分）</p>'+
+    '<p style="margin-top:4px">最弱：<b style="color:'+QUADRANTS[rep.weak].color+'">'+QUADRANTS[rep.weak].name+'</b>（'+rep.levels[rep.weak].score+' 分）</p>'+
+    '<p style="margin-top:12px;color:var(--mut);font-size:13.5px">最弱象限就是 90 天最大的撬动点——补它，不只是补一块短板，而是给整台机器换一个更高效的启动器。</p></div>';
+
+  // 核心问题
+  $('coreSpot').innerHTML='<div class="st" style="color:'+QUADRANTS[rep.core.q].color+'">核心问题 · '+QUADRANTS[rep.core.q].name+'象限</div>'+
+    '<h3>'+esc(rep.core.t)+'</h3><p>'+esc(rep.core.d)+'</p>';
+
+  // 杠杆点
+  $('leverageSpot').innerHTML='<div class="st" style="color:'+QUADRANTS[rep.leverage.q].color+'">最大杠杆点 · '+QUADRANTS[rep.leverage.q].name+'象限</div>'+
+    '<h3>'+esc(rep.leverage.t)+'</h3><p>'+esc(rep.leverage.d)+'</p>';
+
+  // 矛盾点
+  var cl=rep.contra.map(function(c){
+    return '<li><span class="cmark">!</span><div><b>'+esc(c.a)+'</b><br>'+esc(c.b)+'</div></li>';
+  }).join('');
+  $('contraBlock').innerHTML='<h3><span class="cmark">!</span>诚实镜面 · 你的自欺点</h3><ul>'+cl+'</ul>';
+
+  // 时间轴
+  $('timeline').innerHTML=rep.plan.map(function(p,i){
+    var col=QUADRANTS[p.q].color;
+    return '<div class="tl-row">'+
+      '<div class="tl-time" style="color:'+col+'">第 '+i*30+'-'+(i*30+30)+' 天</div>'+
+      '<div class="tl-axis"><span class="dot" style="background:'+col+';box-shadow:0 0 0 5px color-mix(in srgb,'+col+' 20%, transparent)"></span><span class="line"></span></div>'+
+      '<div class="tl-body" style="border-left:3px solid '+col+'"><h4>'+esc(p.title)+'</h4>'+
+      '<div class="tl-why">'+esc(p.why)+'</div><ul>'+
+      p.items.map(function(it){return '<li><span class="b" style="background:'+col+'"></span><div><b>'+esc(it.t)+'</b><br>'+esc(it.d)+'</div></li>';}).join('')+
+      '</ul></div></div>';
+  }).join('');
+}
+
+function radarSVG(rep){
+  var W=360,H=360,cx=W/2,cy=H/2,R=128;
+  var order=['mind','body','spirit','vocation'];
+  var deg={mind:-90,body:0,spirit:90,vocation:180};
+  function pt(r,d){var rad=d*Math.PI/180;return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};}
+  function poly(points){return points.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');}
+  var levels=rep.levels;
+  // 网格 3 层
+  var grid='';
+  [0.3,0.65,1].forEach(function(f){
+    var pts=order.map(function(q){return pt(R*f,deg[q]);});
+    grid+='<polygon points="'+poly(pts)+'" fill="none" stroke="rgba(255,255,255,.07)"/>';
+  });
+  // 轴线
+  var axes=order.map(function(q){
+    var p=pt(R,deg[q]);
+    return '<line x1="'+cx+'" y1="'+cy+'" x2="'+p.x+'" y2="'+p.y+'" stroke="rgba(255,255,255,.07)"/>';
+  }).join('');
+  // 数据多边形
+  var dataPts=order.map(function(q){var s=levels[q].score;var f=0.3+(s-1)*0.35;return pt(R*f,deg[q]);});
+  var dataPoly='<polygon points="'+poly(dataPts)+'" fill="rgba(167,139,250,.16)" stroke="url(#radg)" stroke-width="2"/>';
+  // 顶点圆 + 标签
+  var dots=order.map(function(q){
+    var s=levels[q].score;var f=0.3+(s-1)*0.35;var p=pt(R*f,deg[q]);var lp=pt(R+26,deg[q]);
+    return '<circle cx="'+p.x+'" cy="'+p.y+'" r="5" fill="'+QUADRANTS[q].color+'"/>'+
+      '<text x="'+lp.x+'" y="'+lp.y+'" fill="'+QUADRANTS[q].color+'" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="middle">'+QUADRANTS[q].name+' '+s+'</text>';
+  }).join('');
+  return '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs><linearGradient id="radg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>'+
+    grid+axes+dataPoly+dots+'</svg>';
+}
+
+/* ===== 初始化 ===== */
+$('btnStart').onclick=function(){ showView('view-quiz'); renderQuestion(); };
+$('btnAbout').onclick=function(){ showAbout(); };
+$('btnRestart').onclick=function(){ location.reload(); };
+buildHeroMap();
+function showAbout(){ showToast('四象限：心智·身体·精神·事业，每象限 5 题，判定 L1/L2/L3。等级由各象限得分与你的补充说明综合得出。'); }
+function showToast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(function(){t.classList.remove('show');},2600); }
+</script>
+</body>
+</html>
