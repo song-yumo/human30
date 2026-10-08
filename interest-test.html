@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>职业兴趣测试 · RIASEC 六型</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f97316' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg0:#0a0e15;--bg1:#0f1522;--card:#121a29;--card2:#0e1522;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);
+  --ink:#e8eef7;--mut:#93a4bc;--faint:#5f7089;
+  --r:#ef4444;--i:#3b82f6;--a:#a855f7;--s:#22c55e;--e:#f97316;--c:#06b6d4;
+  --glass:rgba(18,26,41,.72);--shadow:0 20px 60px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg0);color:var(--ink);font-family:"Noto Sans SC",-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.7;min-height:100vh;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(900px 500px at 15% -10%,rgba(63,131,248,.10),transparent 60%),radial-gradient(800px 500px at 90% -5%,rgba(249,115,22,.08),transparent 55%),radial-gradient(900px 700px at 50% 120%,rgba(168,85,247,.07),transparent 60%);}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px}
+.hidden{display:none!important}
+.view{animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 30px;border-radius:999px;font-size:15px;font-weight:600;background:linear-gradient(135deg,#3b82f6,#f97316);color:#051018;transition:.25s;box-shadow:0 10px 30px rgba(59,130,246,.25)}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--mut);border:1px solid var(--line2);box-shadow:none}
+.btn.ghost:hover{color:var(--ink);border-color:rgba(255,255,255,.3)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* 起始页 */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--mut);font-size:13px;letter-spacing:.26em;text-transform:uppercase;margin-bottom:22px}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--e);box-shadow:0 0 12px var(--e)}
+.hero h1{font-size:clamp(34px,6vw,54px);line-height:1.14;font-weight:800;margin-bottom:18px}
+.hero h1 .thin{font-weight:300;color:var(--mut)}
+.hero .sub{color:var(--mut);font-size:clamp(14px,2.2vw,17px);max-width:620px;margin-bottom:34px}
+.hex-wrap{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 30px;max-width:640px}
+.ht{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card2);font-size:13.5px;color:var(--mut)}
+.ht i{width:10px;height:10px;border-radius:3px;flex:none}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap}
+.meta{margin-top:24px;color:var(--faint);font-size:13px}
+
+/* 答题页 */
+.quiz{padding:42px 0 60px;max-width:680px;margin:0 auto}
+.q-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.q-count{color:var(--faint);font-size:13px;letter-spacing:.06em}
+.q-chip{font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;border:1px solid;letter-spacing:.04em}
+.progress-track{height:5px;background:var(--card2);border-radius:99px;overflow:hidden;margin:14px 0 26px}
+.progress-fill{height:100%;width:4%;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#f97316);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.q-card{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:28px 26px;backdrop-filter:blur(8px);box-shadow:var(--shadow)}
+.q-tag{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-bottom:12px}
+.q-txt{font-size:clamp(19px,3.2vw,25px);font-weight:700;line-height:1.45;margin-bottom:6px}
+.q-dir{color:var(--faint);font-size:13px;margin-bottom:22px}
+.scale{display:flex;flex-direction:column;gap:10px}
+.sc-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:var(--card2);transition:.16s;cursor:pointer;color:var(--mut);font-size:14.5px}
+.sc-opt:hover{border-color:var(--line2);background:#16213a;color:var(--ink)}
+.sc-opt.sel{border-color:var(--qc);background:color-mix(in srgb,var(--qc) 12%,var(--card2));color:var(--ink)}
+.sc-opt .k{flex:none;width:24px;height:24px;border-radius:50%;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--faint)}
+.sc-opt.sel .k{background:var(--qc);border-color:var(--qc);color:#051018;font-weight:700}
+.q-nav{display:flex;justify-content:space-between;margin-top:24px;align-items:center}
+.q-nav .btn{padding:12px 26px}
+
+/* 结果页 */
+.result{padding:50px 0 80px}
+.rep-head{text-align:center;margin-bottom:40px}
+.rep-head .eyebrow{color:var(--faint);letter-spacing:.2em;font-size:12px;text-transform:uppercase}
+.rep-head h2{font-size:clamp(30px,5vw,42px);font-weight:800;margin:10px 0 8px}
+.rep-head p{color:var(--mut);max-width:600px;margin:0 auto}
+.code-banner{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:8px 0 30px}
+.code-letter{font-size:46px;font-weight:800;padding:6px 20px;border-radius:14px;color:#051018;box-shadow:var(--shadow)}
+.sec-title{display:flex;align-items:center;gap:12px;margin:48px 0 18px;font-size:22px;font-weight:700}
+.sec-title .no{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#051018;flex:none}
+.bars{display:flex;flex-direction:column;gap:14px}
+.bar-row{display:grid;grid-template-columns:70px 1fr 46px;gap:12px;align-items:center}
+.bar-row .bt{font-weight:700;font-size:14px;text-align:right}
+.bar-track{height:16px;background:var(--card2);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.bar-row .bv{font-size:14px;font-weight:700;color:var(--mut)}
+.radar-wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:16px;display:flex;flex-wrap:wrap;gap:22px;align-items:center;justify-content:center}
+.radar-wrap svg{max-width:360px;width:100%}
+.radar-side{flex:1;min-width:230px;max-width:400px}
+.radar-side h3{font-size:18px;margin-bottom:6px}
+.radar-side p{color:var(--mut);font-size:14px}
+.type-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:640px){.type-cards{grid-template-columns:1fr}}
+.tc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;border-top:4px solid var(--qc)}
+.tc h4{font-size:16px;margin-bottom:4px}
+.tc .tcode{font-size:12px;color:var(--faint);letter-spacing:.1em;margin-bottom:10px}
+.tc p{color:var(--mut);font-size:13.5px}
+.tc .val{display:inline-block;margin-top:10px;font-size:12px;padding:4px 10px;border-radius:99px;background:color-mix(in srgb,var(--qc) 15%,transparent);color:var(--ink)}
+.direct{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:16px}
+.direct h3{font-size:18px;margin-bottom:12px}
+.direct ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.direct li{display:flex;gap:12px;color:var(--mut);font-size:14.5px;align-items:flex-start}
+.direct li .b{flex:none;width:8px;height:8px;border-radius:50%;background:var(--qc);margin-top:8px}
+.direct li b{color:var(--ink);font-weight:600}
+.re-cta{text-align:center;margin-top:50px;padding:34px;background:var(--card);border:1px solid var(--line);border-radius:14px}
+.re-cta p{color:var(--mut);margin-bottom:18px}
+#toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);background:#16213a;border:1px solid var(--line2);padding:12px 20px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:60}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#loading{position:fixed;inset:0;background:var(--bg0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;z-index:50}
+.spinner{width:52px;height:52px;border-radius:50%;border:3px solid var(--card2);border-top-color:#3b82f6;border-right-color:#f97316;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading p{color:var(--mut);font-size:14px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- 起始页 -->
+<section id="view-start" class="view">
+  <div class="wrap hero">
+    <div class="eyebrow"><span class="dot"></span>RIASEC · 职业兴趣测试</div>
+    <h1>测出你天生的<span class="thin">职业方向</span></h1>
+    <p class="sub">48 道原创题，扫描你的现实·研究·艺术·社会·企业·常规六大职业兴趣类型，输出你的三字母职业代码与方向建议。</p>
+    <div class="hex-wrap" id="hexLegend"></div>
+    <div class="cta-row">
+      <button class="btn" id="btnStart">开始测试（约 4 分钟）</button>
+      <button class="btn ghost" id="btnHow">原理说明</button>
+    </div>
+    <div class="meta">题目为原创编写，借鉴公开的 RIASEC 六型框架 · 数据仅保存在本机</div>
+  </div>
+</section>
+
+<!-- 答题页 -->
+<section id="view-quiz" class="view hidden">
+  <div class="wrap quiz">
+    <div class="q-top"><div class="q-count" id="qCount"></div><div class="q-chip" id="qChip">现实型 R</div></div>
+    <div class="progress-track"><div class="progress-fill" id="qFill"></div></div>
+    <div class="q-card" id="qCard"></div>
+  </div>
+</section>
+
+<!-- 结果页 -->
+<section id="view-result" class="view hidden">
+  <div class="wrap result">
+    <div class="rep-head">
+      <div class="eyebrow">RIASEC · 测试结果</div>
+      <h2>你的职业兴趣代码</h2>
+      <p id="repSub"></p>
+    </div>
+    <div class="code-banner" id="codeBanner"></div>
+
+    <div class="sec-title"><div class="no" style="background:#3b82f6">1</div>六型分数</div>
+    <div class="bars" id="bars"></div>
+
+    <div class="sec-title"><div class="no" style="background:#a855f7">2</div>类型解读</div>
+    <div class="type-cards" id="typeCards"></div>
+
+    <div class="sec-title"><div class="no" style="background:#f97316">3</div>方向建议</div>
+    <div class="direct" id="directBlock"></div>
+
+    <div class="re-cta"><p>这份代码是你的起点。结合自己的处境，朝匹配的方向迈出第一步。</p><button class="btn" id="btnRestart">重新测试</button></div>
+  </div>
+</section>
+
+<div id="loading" class="hidden"><div class="spinner"></div><p id="loadingText">正在计算你的职业类型…</p></div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ===== 六型定义 ===== */
+var TYPES={
+ R:{name:"现实型",en:"Realistic",color:"#ef4444",desc:"动手、工具、机械、户外与实物。喜欢与看得见摸得着的东西打交道。"},
+ I:{name:"研究型",en:"Investigative",color:"#3b82f6",desc:"分析、思考、研究与解决复杂问题。享受追根究底。"},
+ A:{name:"艺术型",en:"Artistic",color:"#a855f7",desc:"创造、表达、审美与想象。偏爱自由创作，不爱循规蹈矩。"},
+ S:{name:"社会型",en:"Social",color:"#22c55e",desc:"助人、教学、协作与沟通。从帮助他人中获得价值。"},
+ E:{name:"企业型",en:"Enterprising",color:"#f97316",desc:"领导、说服、经营与竞争。目标感强，敢承担风险。"},
+ C:{name:"常规型",en:"Conventional",color:"#06b6d4",desc:"规范、细节、数据与秩序。做事条理，重视准确可靠。"}
+};
+var CODE_ORDER=["R","I","A","S","E","C"];
+
+/* ===== 原创题目数据（48 题，六型各 8 题）===== */
+var QUESTIONS=[
+ /* --- R 现实型 --- */
+ {type:"R",dim:"活动偏好",t:"我喜欢动手修理、组装或拆卸物品，比如工具、电器、家具。"},
+ {type:"R",dim:"活动偏好",t:"我愿意到户外或需要体力干活的环境中做事。"},
+ {type:"R",dim:"活动偏好",t:"我喜欢操作机械、车辆或各类设备。"},
+ {type:"R",dim:"活动偏好",t:"比起坐在电脑前空想，我更愿意亲手做出实物。"},
+ {type:"R",dim:"能力自评",t:"我的动手能力不错，能较快学会操作工具或机械。"},
+ {type:"R",dim:"能力自评",t:"我能独立完成手工、维修或安装类的活儿。"},
+ {type:"R",dim:"能力自评",t:"我对结构、构造、机械原理有天然的直觉。"},
+ {type:"R",dim:"能力自评",t:"别人常夸我实操或动手能力强。"},
+ /* --- I 研究型 --- */
+ {type:"I",dim:"活动偏好",t:"我喜欢研究事物背后的原理和规律。"},
+ {type:"I",dim:"活动偏好",t:"我愿意花长时间钻研一个难题或复杂问题。"},
+ {type:"I",dim:"活动偏好",t:"我喜欢阅读科普、专业或学术类内容。"},
+ {type:"I",dim:"活动偏好",t:"遇到不懂的事，我习惯追根究底搞清楚为什么。"},
+ {type:"I",dim:"能力自评",t:"我能用逻辑分析把复杂问题拆解开。"},
+ {type:"I",dim:"能力自评",t:"我擅长独立查资料、做研究或验证一个想法。"},
+ {type:"I",dim:"能力自评",t:"我的抽象思维和分析能力比较强。"},
+ {type:"I",dim:"能力自评",t:"我能把很复杂的概念想清楚并讲明白。"},
+ /* --- A 艺术型 --- */
+ {type:"A",dim:"活动偏好",t:"我喜欢创作，比如写作、画画、设计、音乐或视频。"},
+ {type:"A",dim:"活动偏好",t:"我对美感、配色、设计和审美有比较高的敏感度。"},
+ {type:"A",dim:"活动偏好",t:"我喜欢尝试新奇的表达方式，不爱走常规套路。"},
+ {type:"A",dim:"活动偏好",t:"比起按固定流程照搬，我更愿意自由发挥创造。"},
+ {type:"A",dim:"能力自评",t:"我有不错的创作或表达能力（文字、画面或声音）。"},
+ {type:"A",dim:"能力自评",t:"我对设计、配色和风格有自己的判断。"},
+ {type:"A",dim:"能力自评",t:"我能把一个想法变成具体的作品。"},
+ {type:"A",dim:"能力自评",t:"别人觉得我挺有创意、挺有想法。"},
+ /* --- S 社会型 --- */
+ {type:"S",dim:"活动偏好",t:"我喜欢帮助别人解决问题或获得成长。"},
+ {type:"S",dim:"活动偏好",t:"我愿意做教学、辅导、咨询或公益这类助人的事。"},
+ {type:"S",dim:"活动偏好",t:"我喜欢组织或参与能让别人受益的活动。"},
+ {type:"S",dim:"活动偏好",t:"和人打交道时，我能自然地共情、愿意倾听。"},
+ {type:"S",dim:"能力自评",t:"我善于理解别人的感受和真实需求。"},
+ {type:"S",dim:"能力自评",t:"我能把知识或经验清楚地教给别人。"},
+ {type:"S",dim:"能力自评",t:"我有耐心倾听并给他人支持。"},
+ {type:"S",dim:"能力自评",t:"别人愿意向我倾诉或求助。"},
+ /* --- E 企业型 --- */
+ {type:"E",dim:"活动偏好",t:"我喜欢领导、组织、说服或谈判这类事情。"},
+ {type:"E",dim:"活动偏好",t:"我对经营、赚钱和商业机会有浓厚兴趣。"},
+ {type:"E",dim:"活动偏好",t:"我喜欢设定目标并推动团队去达成。"},
+ {type:"E",dim:"活动偏好",t:"我不怕承担风险，愿意去争取和竞争。"},
+ {type:"E",dim:"能力自评",t:"我有较强的表达和说服能力。"},
+ {type:"E",dim:"能力自评",t:"我能带动别人，把一群人组织起来。"},
+ {type:"E",dim:"能力自评",t:"我对商业或经营有判断力和行动力。"},
+ {type:"E",dim:"能力自评",t:"遇到机会我能果断决策、主动出击。"},
+ /* --- C 常规型 --- */
+ {type:"C",dim:"活动偏好",t:"我喜欢有条理地整理、记录和核对信息。"},
+ {type:"C",dim:"活动偏好",t:"我愿意做数据、表格、文档这类规范细致的事。"},
+ {type:"C",dim:"活动偏好",t:"我喜欢按既定流程和规则把事情办妥。"},
+ {type:"C",dim:"活动偏好",t:"我对细节和准确性有比较高的要求。"},
+ {type:"C",dim:"能力自评",t:"我做事条理清晰，注重细节。"},
+ {type:"C",dim:"能力自评",t:"我能准确处理数据、文档或表格。"},
+ {type:"C",dim:"能力自评",t:"我擅长按流程把事做得规范。"},
+ {type:"C",dim:"能力自评",t:"别人觉得我细心、可靠、有章法。"}
+];
+
+/* 评分档位 */
+var SCALE=[{v:0,l:"完全不像我"},{v:1,l:"不太像我"},{v:2,l:"一般般"},{v:3,l:"比较像我"},{v:4,l:"非常像我"}];
+
+/* ===== 状态 ===== */
+var answers={}; var cur=0;
+var $=function(id){return document.getElementById(id);};
+
+/* 起始页六型图例 */
+function buildHex(){
+  $('hexLegend').innerHTML=CODE_ORDER.map(function(c){
+    return '<div class="ht"><i style="background:'+TYPES[c].color+'"></i>'+TYPES[c].name+' · '+TYPES[c].en+'</div>';
+  }).join('');
+}
+
+/* 视图切换 */
+function showView(id){["view-start","view-quiz","view-result"].forEach(function(v){$(v).classList.add("hidden")});$(id).classList.remove("hidden");window.scrollTo(0,0);}
+
+/* 渲染题目 */
+function renderQuestion(){
+  var q=QUESTIONS[cur], col=TYPES[q.type].color;
+  $('qCount').textContent="第 "+(cur+1)+" 题 / "+QUESTIONS.length;
+  $('qChip').textContent=TYPES[q.type].name+" "+q.type;
+  $('qChip').style.color=col;$('qChip').style.borderColor=col;
+  $('qFill').style.width=((cur+1)/QUESTIONS.length*100)+"%";
+  var has=answers[cur];
+  var opts=SCALE.map(function(s,i){
+    return '<button class="sc-opt'+(has===i?" sel":"")+'" data-i="'+i+'" style="--qc:'+col+'"><span>'+s.l+'</span><span class="k">'+s.v+'</span></button>';
+  }).join('');
+  $('qCard').innerHTML=
+    '<div class="q-tag" style="color:'+col+'">'+TYPES[q.type].name+' '+q.type+' · '+q.dim+'</div>'+
+    '<div class="q-txt">'+q.t+'</div>'+
+    '<div class="q-dir">'+SCALE.map(function(s){return s.l;}).join(" · ")+'</div>'+
+    '<div class="scale">'+opts+'</div>'+
+    '<div class="q-nav"><button class="btn ghost" id="qBack">上一步</button><button class="btn" id="qNext">'+(cur===QUESTIONS.length-1?"完成测试":"下一题")+'</button></div>';
+  $('qCard').querySelectorAll(".sc-opt").forEach(function(b){
+    b.onclick=function(){answers[cur]=+b.getAttribute("data-i");renderQuestion();};
+  });
+  $('qBack').onclick=function(){if(cur>0){cur--;renderQuestion();}};
+  $('qNext').onclick=function(){
+    if(typeof answers[cur]!=="number"){showToast("请先选择一个选项");return;}
+    if(cur<QUESTIONS.length-1){cur++;renderQuestion();}else{finish();}
+  };
+}
+
+/* 完成 */
+function finish(){
+  showLoading();
+  setTimeout(function(){
+    var rep=generate(); renderResult(rep); hideLoading(); showView("view-result");
+  },1200);
+}
+function showLoading(){$("loading").classList.remove("hidden");var l=0;var w=setInterval(function(){l=Math.min(l+8,96);$("loadingText").textContent="正在计算你的职业类型 "+l+"%…";if(l>=96)clearInterval(w);},110);}
+function hideLoading(){$("loading").classList.add("hidden");}
+
+/* ===== 计分与结果 ===== */
+function generate(){
+  var scores={};CODE_ORDER.forEach(function(c){scores[c]=0;});
+  QUESTIONS.forEach(function(q,i){var a=answers[i];if(typeof a==="number"){scores[q.type]+=SCALE[a].v;}});
+  var sorted=CODE_ORDER.slice().sort(function(a,b){return scores[b]-scores[a];});
+  var top3=sorted.slice(0,3);
+  // 用最小支配差异排序同分
+  var max=Math.max.apply(null,CODE_ORDER.map(function(c){return scores[c];}));
+  return {scores:scores,sorted:sorted,top3:top3,max:max};
+}
+
+/* 类型解读 + 方向建议（原创文案） */
+var TYPE_TEXT={
+ R:{who:"你喜欢亲手做出看得见的结果，动手和实操让你踏实。你不耐烦纸上谈兵，更愿意跟工具、机器和实物打交道。",
+   dirs:["工程技术、设备运维、机械/电气等需要动手实操的方向","户外、制造、建筑、车辆等技术型岗位","把「能把事做成」当作核心竞争力的职业路径"]},
+ I:{who:"你天生爱琢磨「为什么」，能把复杂问题拆开想清楚。独立钻研、逻辑分析是你最舒服的状态。",
+   dirs:["研究、分析、数据、技术研发等脑力深钻的方向","需要逻辑和证据支持的岗位（咨询、分析、算法）","以专业深度建立不可替代性的职业路径"]},
+ A:{who:"你靠创造和表达获得能量，对美感与新鲜表达敏感，最怕一成不变的流程。自由创作是你的主场。",
+   dirs:["创意、设计、内容、写作、影视、艺术等表达型方向","需要原创和审美判断的岗位","打造个人作品与个人品牌的职业路径"]},
+ S:{who:"你在帮助、教导、与人协作中获得价值，擅长共情与倾听，是团队的粘合剂。",
+   dirs:["教育、培训、咨询、医疗、公益等助人方向","需要沟通与协作的团队型岗位","以利他建立信任与影响力的职业路径"]},
+ E:{who:"你目标感强，敢拍板、敢承担风险，享受说服与推动。你更想做「把事做成的人」而不是「做事的人」。",
+   dirs:["管理、销售、创业、经营等主导型方向","需要决策与说服力的岗位","以结果和影响力建立事业盘子的职业路径"]},
+ C:{who:"你条理清晰、重视细节和准确，能把事情做得规范可靠。秩序感和可预测性让你安心。",
+   dirs:["财务、数据、行政、流程管理等规范型方向","需要细致与准确性的岗位","以专业可靠建立长期信用的职业路径"]}
+};
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function renderResult(rep){
+  var t3=rep.top3;
+  $("repSub").innerHTML="你的三个高分类型依次是 <b>"+t3.join(" · ")+"</b>，组成职业兴趣代码。六边形上相邻的类型往往共存，这组代码指向你的自然倾向。";
+  // 三码横幅
+  $("codeBanner").innerHTML=t3.map(function(c,i){
+    return '<div class="code-letter" style="background:'+TYPES[c].color+'">'+c+"</div>";
+  }).join("")+'<div style="color:var(--mut);font-size:15px">'+t3.map(function(c){return TYPES[c].name;}).join(" · ")+'</div>';
+  // 分数条
+  $("bars").innerHTML=CODE_ORDER.map(function(c){
+    var pct=Math.round(rep.scores[c]/rep.max*100);
+    return '<div class="bar-row"><div class="bt" style="color:'+TYPES[c].color+'">'+c+'</div>'+
+      '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+TYPES[c].color+';--qc:'+TYPES[c].color+'"></div></div>'+
+      '<div class="bv">'+rep.scores[c]+'</div></div>';
+  }).join("");
+  // 雷达图
+  $("radarWrap")?null:null;
+  // 类型解读
+  $("typeCards").innerHTML=CODE_ORDER.map(function(c){
+    return '<div class="tc" style="--qc:'+TYPES[c].color+'"><h4>'+TYPES[c].name+" "+c+'</h4><div class="tcode">'+TYPES[c].en+' · 得分 '+rep.scores[c]+'</div><p>'+TYPE_TEXT[c].who+'</p>'+
+      (rep.scores[c]>=Math.round(rep.max*0.7)?'<span class="val">你的高分类型</span>':rep.scores[c]>=Math.round(rep.max*0.4)?'<span class="val">中等倾向</span>':'<span class="val">较低倾向</span>')+'</div>';
+  }).join("");
+  // 方向建议：前三型
+  var dirs=t3.slice(0,3);
+  $("directBlock").innerHTML="<h3>优先匹配：你的前三码方向</h3><ul>"+dirs.map(function(c){
+    return TYPE_TEXT[c].dirs.map(function(d,i){return '<li><span class="b" style="background:'+TYPES[c].color+'"></span><div><b>'+TYPES[c].name+'方向：</b>'+d+'</div></li>';}).join("");
+  }).join("")+"</ul><p style='margin-top:16px;color:var(--faint);font-size:13px'>提示：兴趣代码帮你找方向，但真正适合什么，还要结合技能、价值观与现实约束综合判断。</p>";
+}
+
+/* 初始化 */
+$("btnStart").onclick=function(){showView("view-quiz");renderQuestion();};
+$("btnHow").onclick=function(){showToast("原理：借鉴公开的 RIASEC 六型框架，48 道原创题按六型计分，取前三高分形成三字母代码，再匹配对应职业方向。题目为原创，不涉及版权量表的原题。");};
+$("btnRestart").onclick=function(){location.reload();};
+function showToast(msg){var t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove("show");},3000);}
+buildHex();
+</script>
+</body>
+</html>
